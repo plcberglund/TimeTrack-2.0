@@ -49,7 +49,6 @@ object ReportExporter {
         val sub = w.style(XlsxWriter.Style(fontSize = 11, fontColor = "FF888888", hAlign = "left"))
 
         val dayHead = w.style(XlsxWriter.Style(bold = true, fontSize = 12, fontColor = "FFFFFFFF", fill = ORANGE, border = true, borderColor = "FF$ORANGE", hAlign = "left"))
-        val dayHeadNum = w.style(XlsxWriter.Style(bold = true, fontSize = 12, fontColor = "FFFFFFFF", fill = ORANGE, border = true, borderColor = "FF$ORANGE", hAlign = "right"))
 
         val colHead = w.style(XlsxWriter.Style(bold = true, fontSize = 10, fontColor = "FF555555", fill = GRAY_HEAD, border = true, hAlign = "left"))
         val colHeadNum = w.style(XlsxWriter.Style(bold = true, fontSize = 10, fontColor = "FF555555", fill = GRAY_HEAD, border = true, hAlign = "right"))
@@ -90,11 +89,9 @@ object ReportExporter {
             val heading = "${WeekUtils.dayName(day.date)}  ${WeekUtils.dayMonth(day.date)}"
 
             if (day.shifts.isNotEmpty()) {
-                // Dag-header
+                // Dag-header (ren orange rad, bara dagens namn)
                 w.text(row, 1, heading, dayHead)
-                w.merge(row, 1, row, 3)
-                w.number(row, 4, dayHours, dayHeadNum)
-                w.number(row, 5, dayOb, dayHeadNum)
+                w.merge(row, 1, row, 5)
                 w.rowHeight(row, 20.0)
                 row++
 
@@ -116,10 +113,8 @@ object ReportExporter {
                     row++
                 }
             } else if (day.status != null) {
-                w.text(row, 1, heading, dayHead)
-                w.merge(row, 1, row, 3)
-                w.text(row, 4, day.status.label, dayHeadNum)
-                w.merge(row, 4, row, 5)
+                w.text(row, 1, "$heading  ·  ${day.status.label}", dayHead)
+                w.merge(row, 1, row, 5)
                 w.rowHeight(row, 20.0)
                 row++
             }
