@@ -61,7 +61,7 @@ fun ShiftSheet(
     var hoursText by remember { mutableStateOf(target.shift?.hours?.let { formatHours(it) } ?: "") }
     var obText by remember { mutableStateOf(target.shift?.obHours?.takeIf { it > 0 }?.let { formatHours(it) } ?: "") }
 
-    val canSave = company.isNotBlank() && parseHours(hoursText) > 0
+    val canSave = company.isNotBlank() && (parseHours(hoursText) > 0 || parseHours(obText) > 0)
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
