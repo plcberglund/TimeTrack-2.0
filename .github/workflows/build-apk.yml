@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checka ut koden
         uses: actions/checkout@v4
@@ -33,3 +35,12 @@ jobs:
           name: timetrack-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      - name: Publicera APK som Release (direkt nedladdning)
+        if: github.ref_name == 'claude/time-reporting-excel-app-5wte5y' || github.ref_name == 'main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: TimeTrack – senaste debug-APK
+          prerelease: true
+          files: app/build/outputs/apk/debug/app-debug.apk
