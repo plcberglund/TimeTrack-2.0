@@ -48,10 +48,10 @@ data class WeekUiState(
     val days: List<DayUi>,
     val totalHours: Double,
     val totalOb: Double,
-    val prevWeek: Int,
-    val prevHours: Double,
-    val prevOb: Double,
-    val prevHasData: Boolean,
+    val nextWeek: Int,
+    val nextHours: Double,
+    val nextOb: Double,
+    val nextHasData: Boolean,
 )
 
 data class MonthSummary(val first: LocalDate, val label: String, val hours: Double, val obHours: Double)
@@ -88,14 +88,14 @@ class TimeTrackViewModel(app: Application) : AndroidViewModel(app) {
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val weekState: StateFlow<WeekUiState> = _monday.flatMapLatest { monday ->
-        val prevMonday = monday.minusWeeks(1)
+        val nextMonday = monday.plusWeeks(1)
         combine(
             repo.observeShifts(monday, monday.plusDays(6)),
             repo.observeDayMarks(monday, monday.plusDays(6)),
-            repo.observeShifts(prevMonday, prevMonday.plusDays(6)),
-            repo.observeDayMarks(prevMonday, prevMonday.plusDays(6)),
-        ) { shifts, marks, prevShifts, prevMarks ->
-            buildWeek(monday, shifts, marks, prevShifts, prevMarks)
+            repo.observeShifts(nextMonday, nextMonday.plusDays(6)),
+            repo.observeDayMarks(nextMonday, nextMonday.plusDays(6)),
+        ) { shifts, marks, nextShifts, nextMarks ->
+            buildWeek(monday, shifts, marks, nextShifts, nextMarks)
         }
     }.stateIn(
         viewModelScope,
@@ -177,8 +177,8 @@ class TimeTrackViewModel(app: Application) : AndroidViewModel(app) {
         monday: LocalDate,
         shifts: List<Shift>,
         marks: List<DayMark>,
-        prevShifts: List<Shift>,
-        prevMarks: List<DayMark>,
+        nextShifts: List<Shift>,
+        nextMarks: List<DayMark>,
     ): WeekUiState {
         val today = LocalDate.now()
         val shiftsByDay = shifts.groupBy { LocalDate.ofEpochDay(it.date) }
@@ -190,7 +190,7 @@ class TimeTrackViewModel(app: Application) : AndroidViewModel(app) {
             DayUi(date = date, isToday = date == today, status = status, shifts = dayShifts)
         }
 
-        val prevMonday = monday.minusWeeks(1)
+        val nextMonday = monday.plusWeeks(1)
         return WeekUiState(
             monday = monday,
             week = WeekUtils.isoWeek(monday),
@@ -199,10 +199,10 @@ class TimeTrackViewModel(app: Application) : AndroidViewModel(app) {
             days = days,
             totalHours = days.sumOf { it.hours },
             totalOb = days.sumOf { it.obHours },
-            prevWeek = WeekUtils.isoWeek(prevMonday),
-            prevHours = prevShifts.sumOf { it.hours },
-            prevOb = prevShifts.sumOf { it.obHours },
-            prevHasData = prevShifts.isNotEmpty() || prevMarks.isNotEmpty(),
+            nextWeek = WeekUtils.isoWeek(nextMonday),
+            nextHours = nextShifts.sumOf { it.hours },
+            nextOb = nextShifts.sumOf { it.obHours },
+            nextHasData = nextShifts.isNotEmpty() || nextMarks.isNotEmpty(),
         )
     }
 

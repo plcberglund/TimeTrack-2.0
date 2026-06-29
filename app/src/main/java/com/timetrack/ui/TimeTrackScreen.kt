@@ -158,7 +158,7 @@ private fun WeekPane(
 ) {
     Column(Modifier.fillMaxSize()) {
         WeekNavigator(week = state.week, range = state.rangeLabel, onPrev = onPrev, onNext = onNext)
-        WeekChips(state = state, onPickPrev = onPrev)
+        WeekChips(state = state, onPickNext = onNext)
         Gap(8)
         LazyColumn(
             modifier = Modifier
@@ -206,7 +206,7 @@ private fun NavSquare(icon: androidx.compose.ui.graphics.vector.ImageVector, des
 }
 
 @Composable
-private fun WeekChips(state: WeekUiState, onPickPrev: () -> Unit) {
+private fun WeekChips(state: WeekUiState, onPickNext: () -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -227,22 +227,22 @@ private fun WeekChips(state: WeekUiState, onPickPrev: () -> Unit) {
                 Text(formatHoursLabel(state.totalHours), color = Color.White.copy(alpha = 0.9f), fontSize = 13.sp)
             }
         }
-        // Föregående vecka
+        // Nästa vecka
         Box(
             Modifier
                 .weight(1f)
                 .height(64.dp)
                 .background(TT.card, RoundedCornerShape(14.dp))
-                .clickable(onClick = onPickPrev)
+                .clickable(onClick = onPickNext)
                 .padding(horizontal = 16.dp),
             contentAlignment = Alignment.CenterStart,
         ) {
             Column {
-                Text("V. ${state.prevWeek}", color = TT.textPrimary, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-                val sub = if (state.prevHasData) {
+                Text("V. ${state.nextWeek}", color = TT.textPrimary, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                val sub = if (state.nextHasData) {
                     buildString {
-                        append(formatHoursLabel(state.prevHours))
-                        if (state.prevOb > 0) append(" · OB ${formatHours(state.prevOb)}")
+                        append(formatHoursLabel(state.nextHours))
+                        if (state.nextOb > 0) append(" · OB ${formatHours(state.nextOb)}")
                     }
                 } else "–"
                 Text(sub, color = TT.textTertiary, fontSize = 13.sp)
