@@ -1,8 +1,10 @@
 package com.timetrack.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,9 +23,15 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
@@ -144,14 +152,17 @@ fun SectionLabel(text: String, modifier: Modifier = Modifier) {
     )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun QuickChips(
     options: List<String>,
     onPick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onDelete: ((String) -> Unit)? = null,
 ) {
     if (options.isEmpty()) return
+    var pendingDelete by remember { mutableStateOf<String?>(null) }
+
     FlowRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -161,12 +172,37 @@ fun QuickChips(
             Box(
                 Modifier
                     .background(TT.cardElevated, RoundedCornerShape(20.dp))
-                    .clickable { onPick(option) }
+                    .combinedClickable(
+                        onClick = { onPick(option) },
+                        onLongClick = if (onDelete != null) {
+                            { pendingDelete = option }
+                        } else null,
+                    )
                     .padding(horizontal = 16.dp, vertical = 9.dp),
             ) {
                 Text(option, color = TT.textPrimary, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
+    }
+
+    val toDelete = pendingDelete
+    if (toDelete != null && onDelete != null) {
+        AlertDialog(
+            onDismissRequest = { pendingDelete = null },
+            containerColor = TT.card,
+            title = { Text("Ta bort snabbknapp", color = TT.textPrimary) },
+            text = { Text("Vill du ta bort \"$toDelete\"?", color = TT.textSecondary) },
+            confirmButton = {
+                TextButton(onClick = { onDelete(toDelete); pendingDelete = null }) {
+                    Text("Ta bort", color = TT.danger)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingDelete = null }) {
+                    Text("Avbryt", color = TT.textSecondary)
+                }
+            },
+        )
     }
 }
 

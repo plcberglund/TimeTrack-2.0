@@ -133,6 +133,8 @@ fun TimeTrackRoot(vm: TimeTrackViewModel = viewModel()) {
                 target.shift?.let { vm.deleteShift(it) }
                 sheet = null
             },
+            onDeleteCompanySuggestion = vm::removeCompanySuggestion,
+            onDeleteWorkplaceSuggestion = vm::removeWorkplaceSuggestion,
         )
     }
 

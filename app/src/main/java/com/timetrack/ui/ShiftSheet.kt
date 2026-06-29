@@ -49,6 +49,8 @@ fun ShiftSheet(
     onDismiss: () -> Unit,
     onSave: (company: String, workplace: String, note: String, hours: Double, ob: Double) -> Unit,
     onDelete: () -> Unit,
+    onDeleteCompanySuggestion: (String) -> Unit = {},
+    onDeleteWorkplaceSuggestion: (String) -> Unit = {},
 ) {
     val editing = target.shift != null
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -94,7 +96,13 @@ fun ShiftSheet(
             InputField(company, { company = it }, "Skriv företag")
             if (companySuggestions.isNotEmpty()) {
                 Gap(10)
-                QuickChips(companySuggestions, onPick = { company = it })
+                QuickChips(companySuggestions, onPick = { company = it }, onDelete = onDeleteCompanySuggestion)
+                Gap(6)
+                Text(
+                    "Tips: håll inne en snabbknapp för att ta bort den.",
+                    color = TT.textTertiary,
+                    fontSize = 12.sp,
+                )
             }
 
             Gap(18)
@@ -103,7 +111,7 @@ fun ShiftSheet(
             InputField(workplace, { workplace = it }, "Skriv arbetsplats")
             if (workplaceSuggestions.isNotEmpty()) {
                 Gap(10)
-                QuickChips(workplaceSuggestions, onPick = { workplace = it })
+                QuickChips(workplaceSuggestions, onPick = { workplace = it }, onDelete = onDeleteWorkplaceSuggestion)
             }
 
             Gap(18)
