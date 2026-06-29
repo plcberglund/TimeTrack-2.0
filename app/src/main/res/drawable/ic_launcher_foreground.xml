@@ -1,0 +1,32 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Klockring -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="7"
+        android:strokeLineCap="round"
+        android:pathData="M54,54 m-27,0 a27,27 0 1,1 54,0 a27,27 0 1,1 -54,0" />
+
+    <!-- Timvisare (uppåt) -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="7"
+        android:strokeLineCap="round"
+        android:pathData="M54,54 L54,40" />
+
+    <!-- Minutvisare (åt höger) -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="7"
+        android:strokeLineCap="round"
+        android:pathData="M54,54 L67,57" />
+
+    <!-- Centrumpunkt -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,54 m-4.5,0 a4.5,4.5 0 1,1 9,0 a4.5,4.5 0 1,1 -9,0" />
+</vector>
