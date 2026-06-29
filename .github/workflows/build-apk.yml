@@ -1,0 +1,35 @@
+name: Bygg APK
+
+on:
+  push:
+    branches:
+      - main
+      - claude/time-reporting-excel-app-5wte5y
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checka ut koden
+        uses: actions/checkout@v4
+
+      - name: Sätt upp JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Gör gradlew körbar
+        run: chmod +x ./gradlew
+
+      - name: Bygg debug-APK
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Ladda upp APK som artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: timetrack-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
